@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryCraft - Publish Your Stories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --secondary: #f8fafc;
+        --accent: #f59e0b;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --shadow: rgba(0, 0, 0, 0.08);
+        --radius: 8px;
+        --success: #10b981;
+        --error: #ef4444;
+    }
+    /* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 25px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--text);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--text);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.password-input {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.modal-footer p {
+    color: var(--text-light);
+}
+
+.modal-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.modal-footer a:hover {
+    text-decoration: underline;
+}
+
+/* User Menu Styles */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Messages */
+.message {
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.message.success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.message.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+        body {
+            background-color: #f9fafb;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1.05rem;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        /* Story Form */
+        .story-form-container {
+            flex: 2;
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--text);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            min-height: 250px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Preview Section */
+        .preview-container {
+            flex: 1;
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px var(--shadow);
+            padding: 30px;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .preview-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .story-card {
+            background-color: var(--secondary);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .story-card h3 {
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .story-card .meta {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .story-card .excerpt {
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .story-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background-color: #e0e7ff;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Stories List */
+        .stories-container {
+            flex: 2;
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .stories-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .filter-controls select {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: white;
+            color: var(--text);
+        }
+
+        .stories-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .empty-stories {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .empty-stories i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-section p {
+            color: #cbd5e1;
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .preview-container {
+                position: static;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stories-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .success-message {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>StoryCraft</span>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" id="nav-home" class="nav-active">Home</a></li>
+                    <li><a href="#" id="nav-write">Write</a></li>
+                    <li><a href="#" id="nav-stories">My Stories</a></li>
+                    <li><a href="#" id="nav-browse">Browse</a></li>
+                </ul>
+            </nav>
+            
+           <div class="auth-buttons">
+    <button class="btn btn-outline" id="login-btn">Log In</button>
+    <button class="btn btn-primary" id="signup-btn">Sign Up</button>
+</div>
+
+<!-- Add user menu (initially hidden) -->
+<div class="user-menu" id="user-menu" style="display: none;">
+    <div class="user-avatar" id="user-avatar">U</div>
+    <button class="btn btn-outline" id="logout-btn">Log Out</button>
+</div>
+        </div>
+    </header>
+
+<!-- Login Modal -->
+<div class="modal" id="login-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Log In</h2>
+            <button class="close-btn" id="close-login">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-input">
+                        <input type="password" id="login-password" placeholder="Enter password" required>
+                        <button type="button" class="password-toggle" id="toggle-login-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Log In
+                </button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <p>Don't have an account? <a id="switch-to-signup">Sign up</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Signup Modal -->
+<div class="modal" id="signup-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create Account</h2>
+            <button class="close-btn" id="close-signup">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <div class="password-input">
+                        <input type="password" id="signup-password" placeholder="Minimum 6 characters" required>
+                        <button type="button" class="password-toggle" id="toggle-signup-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" placeholder="Re-enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Create Account
+                </button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <p>Already have an account? <a id="switch-to-login">Log in</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+        <!-- Success Message (hidden by default) -->
+        <div id="success-message" class="success-message hidden">
+            <i class="fas fa-check-circle"></i>
+            <span>Your story has been published successfully!</span>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Story Form Section -->
+            <div id="story-form-section" class="story-form-container">
+                <h2 class="section-title">Write Your Story</h2>
+                
+                <form id="story-form">
+                    <div class="form-group">
+                        <label for="story-title">Title</label>
+                        <input type="text" id="story-title" placeholder="Enter a captivating title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story-author">Author Name</label>
+                        <input type="text" id="story-author" placeholder="Your name or pen name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story-genre">Genre</label>
+                        <select id="story-genre" required>
+                            <option value="" disabled selected>Select a genre</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story-tags">Tags (comma separated)</label>
+                        <input type="text" id="story-tags" placeholder="e.g. magic, dragons, epic, journey">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="story-content">Your Story</label>
+                        <textarea id="story-content" placeholder="Once upon a time..." required></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Publish Story
+                        </button>
+                        <button type="button" id="save-draft" class="btn btn-outline">
+                            <i class="fas fa-save"></i> Save as Draft
+                        </button>
+                        <button type="button" id="preview-story" class="btn btn-outline">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Preview Section -->
+            <div id="preview-section" class="preview-container">
+                <h3 class="preview-title">Story Preview</h3>
+                <div id="preview-content">
+                    <div class="story-card">
+                        <h3 id="preview-title">Your Story Title</h3>
+                        <div class="meta">
+                            <span id="preview-author">By Author Name</span>
+                            <span id="preview-genre">Fantasy</span>
+                        </div>
+                        <div class="excerpt" id="preview-excerpt">
+                            Start writing your story to see a preview here. Your story excerpt will appear in this section.
+                        </div>
+                        <div class="tags" id="preview-tags">
+                            <span class="tag">story</span>
+                            <span class="tag">writing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-light">Preview updates as you type</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stories List Section -->
+            <div id="stories-section" class="stories-container hidden">
+                <div class="stories-header">
+                    <h2 class="section-title">Published Stories</h2>
+                    <div>
+                        <button class="btn btn-primary" id="new-story-btn">
+                            <i class="fas fa-plus"></i> New Story
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filter-controls">
+                    <select id="filter-genre">
+                        <option value="all">All Genres</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Science Fiction">Science Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Horror">Horror</option>
+                    </select>
+                    
+                    <select id="filter-sort">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="title">Title A-Z</option>
+                    </select>
+                </div>
+                
+                <div class="stories-list" id="stories-list">
+                    <!-- Stories will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StoryCraft</h3>
+                    <p>A platform for writers to share their stories with the world. Publish, discover, and connect with readers and other writers.</p>
+                    <div class="auth-buttons">
+                        <button class="btn btn-outline" style="color: white; border-color: white;">Log In</button>
+                        <button class="btn btn-primary" style="background-color: white; color: var(--text);">Sign Up</button>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Writing Guidelines</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Content Policy</a></li>
+                        <li><a href="#">Copyright</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 StoryCraft. All rights reserved. Made with <i class="fas fa-heart" style="color: #f59e0b;"></i> for storytellers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample stories data
+        let stories = [
+            {
+                id: 1,
+                title: "The Lost Kingdom of Eldoria",
+                author: "Alexandra Reed",
+                genre: "Fantasy",
+                content: "In a realm where magic flowed like rivers, the kingdom of Eldoria had been lost for centuries. Many had searched for it, but none had returned. That was until a young cartographer named Elara discovered a map hidden within an ancient tome...",
+                tags: ["fantasy", "adventure", "magic", "kingdom"],
+                date: "2023-10-15"
+            },
+            {
+                id: 2,
+                title: "Echoes of Mars",
+                author: "Marcus Chen",
+                genre: "Science Fiction",
+                content: "The first colony on Mars was established in 2078. What they didn't expect to find were the echoes - strange sonic phenomena that seemed to carry whispers of a past that couldn't possibly exist on the red planet...",
+                tags: ["sci-fi", "mars", "colony", "mystery"],
+                date: "2023-10-10"
+            },
+            {
+                id: 3,
+                title: "The Crimson Letter",
+                author: "Isabella Vance",
+                genre: "Mystery",
+                content: "When renowned art collector Arthur Finch is found dead in his study, the only clue is a crimson letter sealed with a strange symbol. Detective Mira Santos must unravel a web of secrets that stretches back decades...",
+                tags: ["mystery", "detective", "crime", "art"],
+                date: "2023-10-05"
+            }
+        ];
+
+        // DOM Elements
+        const storyForm = document.getElementById('story-form');
+        const storyTitleInput = document.getElementById('story-title');
+        const storyAuthorInput = document.getElementById('story-author');
+        const storyGenreSelect = document.getElementById('story-genre');
+        const storyTagsInput = document.getElementById('story-tags');
+        const storyContentTextarea = document.getElementById('story-content');
+        
+        const previewTitle = document.getElementById('preview-title');
+        const previewAuthor = document.getElementById('preview-author');
+        const previewGenre = document.getElementById('preview-genre');
+        const previewExcerpt = document.getElementById('preview-excerpt');
+        const previewTags = document.getElementById('preview-tags');
+        
+        const storiesList = document.getElementById('stories-list');
+        const storiesSection = document.getElementById('stories-section');
+        const storyFormSection = document.getElementById('story-form-section');
+        const previewSection = document.getElementById('preview-section');
+        
+        const successMessage = document.getElementById('success-message');
+        
+        const navHome = document.getElementById('nav-home');
+        const navWrite = document.getElementById('nav-write');
+        const navStories = document.getElementById('nav-stories');
+        const navBrowse = document.getElementById('nav-browse');
+        
+        const newStoryBtn = document.getElementById('new-story-btn');
+        const saveDraftBtn = document.getElementById('save-draft');
+        const previewStoryBtn = document.getElementById('preview-story');
+        
+        const filterGenre = document.getElementById('filter-genre');
+        const filterSort = document.getElementById('filter-sort');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayStories();
+            setupEventListeners();
+            
+            // Update preview as user types
+            storyTitleInput.addEventListener('input', updatePreview);
+            storyAuthorInput.addEventListener('input', updatePreview);
+            storyGenreSelect.addEventListener('change', updatePreview);
+            storyTagsInput.addEventListener('input', updatePreview);
+            storyContentTextarea.addEventListener('input', updatePreview);
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Form submission
+            storyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+               function publishStory() {
+    const title = storyTitleInput.value.trim();
+    const author = storyAuthorInput.value.trim();
+    const genre = storyGenreSelect.value;
+    const tags = storyTagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+    const content = storyContentTextarea.value.trim();
+    
+    if (!title || !author || !genre || !content) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    const newStory = {
+        id: stories.length + 1,
+        title,
+        author: currentUser ? currentUser.name : author, // Use logged in user's name if available
+        genre,
+        content,
+        tags: tags.length > 0 ? tags : ['story'],
+        date: new Date().toISOString().split('T')[0],
+        userId: currentUser ? currentUser.id : null // Link story to user
+    };
+    
+    stories.unshift(newStory);
+    
+    // Show success message
+    successMessage.classList.remove('hidden');
+    setTimeout(() => {
+        successMessage.classList.add('hidden');
+    }, 5000);
+    
+    // Clear form
+    clearForm();
+    
+    // Update preview
+    updatePreview();
+    
+    // Show stories section
+    showSection('stories');
+}
+            
+            // Save draft button
+            saveDraftBtn.addEventListener('click', function() {
+                saveAsDraft();
+            });
+            
+            // Navigation
+            navHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('home');
+            });
+            
+            navWrite.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('write');
+            });
+            
+            navStories.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('stories');
+            });
+            
+            navBrowse.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('stories');
+            });
+            
+            // New story button
+            newStoryBtn.addEventListener('click', function() {
+                showSection('write');
+                clearForm();
+            });
+            
+            // Filter controls
+            filterGenre.addEventListener('change', displayStories);
+            filterSort.addEventListener('change', displayStories);
+        }
+
+        // Show different sections of the app
+        function showSection(section) {
+            // Update active nav
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('nav-active');
+            });
+            
+            if (section === 'home' || section === 'write') {
+                navWrite.classList.add('nav-active');
+                storyFormSection.classList.remove('hidden');
+                previewSection.classList.remove('hidden');
+                storiesSection.classList.add('hidden');
+            } else if (section === 'stories') {
+                navStories.classList.add('nav-active');
+                storyFormSection.classList.add('hidden');
+                previewSection.classList.add('hidden');
+                storiesSection.classList.remove('hidden');
+                displayStories();
+            }
+        }
+
+        // Publish a new story
+        function publishStory() {
+            const title = storyTitleInput.value.trim();
+            const author = storyAuthorInput.value.trim();
+            const genre = storyGenreSelect.value;
+            const tags = storyTagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+            const content = storyContentTextarea.value.trim();
+            
+            if (!title || !author || !genre || !content) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const newStory = {
+                id: stories.length + 1,
+                title,
+                author,
+                genre,
+                content,
+                tags: tags.length > 0 ? tags : ['story'],
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            stories.unshift(newStory);
+            
+            // Show success message
+            successMessage.classList.remove('hidden');
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+            
+            // Clear form
+            clearForm();
+            
+            // Update preview
+            updatePreview();
+            
+            // Show stories section
+            showSection('stories');
+        }
+
+        // Save as draft
+        function saveAsDraft() {
+            const title = storyTitleInput.value.trim();
+            
+            if (!title) {
+                alert('Please add at least a title to save as draft');
+                return;
+            }
+            
+            alert('Draft saved! (In a real app, this would be saved to localStorage or a database)');
+            
+            // In a real app, you would save to localStorage or send to a server
+            // localStorage.setItem('storyDraft', JSON.stringify({
+            //     title: storyTitleInput.value,
+            //     author: storyAuthorInput.value,
+            //     genre: storyGenreSelect.value,
+            //     tags: storyTagsInput.value,
+            //     content: storyContentTextarea.value
+            // }));
+        }
+
+        // Clear the form
+        function clearForm() {
+            storyForm.reset();
+            updatePreview();
+        }
+
+        // Update the preview section
+        function updatePreview() {
+            const title = storyTitleInput.value.trim() || "Your Story Title";
+            const author = storyAuthorInput.value.trim() || "By Author Name";
+            const genre = storyGenreSelect.value || "Fantasy";
+            const content = storyContentTextarea.value.trim() || "Start writing your story to see a preview here. Your story excerpt will appear in this section.";
+            const tags = storyTagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+            
+            previewTitle.textContent = title;
+            previewAuthor.textContent = `By ${author}`;
+            previewGenre.textContent = genre;
+            
+            // Create excerpt (first 150 characters)
+            const excerpt = content.length > 150 ? content.substring(0, 150) + '...' : content;
+            previewExcerpt.textContent = excerpt;
+            
+            // Update tags
+            previewTags.innerHTML = '';
+            const tagList = tags.length > 0 ? tags : ['story', 'writing'];
+            
+            tagList.forEach(tag => {
+                if (tag) {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'tag';
+                    tagElement.textContent = tag;
+                    previewTags.appendChild(tagElement);
+                }
+            });
+        }
+
+        // Display stories in the stories list
+        function displayStories() {
+            const genreFilter = filterGenre.value;
+            const sortFilter = filterSort.value;
+            
+            // Filter stories
+            let filteredStories = stories;
+            if (genreFilter !== 'all') {
+                filteredStories = stories.filter(story => story.genre === genreFilter);
+            }
+            
+            // Sort stories
+            filteredStories = [...filteredStories].sort((a, b) => {
+                if (sortFilter === 'newest') {
+                    return new Date(b.date) - new Date(a.date);
+                } else if (sortFilter === 'oldest') {
+                    return new Date(a.date) - new Date(b.date);
+                } else if (sortFilter === 'title') {
+                    return a.title.localeCompare(b.title);
+                }
+                return 0;
+            });
+            
+            // Clear the list
+            storiesList.innerHTML = '';
+            
+            // Display stories or empty message
+            if (filteredStories.length === 0) {
+                storiesList.innerHTML = `
+                    <div class="empty-stories">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No stories found</h3>
+                        <p>Try changing your filter or write a new story!</p>
+                        <button class="btn btn-primary" id="write-first-story" style="margin-top: 15px;">
+                            <i class="fas fa-pen"></i> Write Your First Story
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listener to the button in empty state
+                document.getElementById('write-first-story')?.addEventListener('click', () => {
+                    showSection('write');
+                });
+                
+                return;
+            }
+            
+            // Display each story
+            filteredStories.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.className = 'story-card';
+                
+                // Create excerpt
+                const excerpt = story.content.length > 200 ? story.content.substring(0, 200) + '...' : story.content;
+                
+                storyElement.innerHTML = `
+                    <h3>${story.title}</h3>
+                    <div class="meta">
+                        <span>By ${story.author}</span>
+                        <span>${story.genre} • ${story.date}</span>
+                    </div>
+                    <div class="excerpt">${excerpt}</div>
+                    <div class="tags">
+                        ${story.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-outline read-story-btn" data-id="${story.id}">
+                            <i class="fas fa-book-reader"></i> Read
+                        </button>
+                        <button class="btn btn-outline edit-story-btn" data-id="${story.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                `;
+                
+                storiesList.appendChild(storyElement);
+            });
+            
+            // Add event listeners to story buttons
+            document.querySelectorAll('.read-story-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const storyId = parseInt(this.getAttribute('data-id'));
+                    readStory(storyId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-story-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const storyId = parseInt(this.getAttribute('data-id'));
+                    editStory(storyId);
+                });
+            });
+        }
+
+        // Read a story
+        function readStory(id) {
+            const story = stories.find(s => s.id === id);
+            if (!story) return;
+            
+            // In a real app, this would open a modal or navigate to a dedicated reading page
+            alert(`Opening: ${story.title}\n\n${story.content.substring(0, 500)}...\n\n(Full story would be displayed in a reading view)`);
+        }
+
+        // Edit a story
+        function editStory(id) {
+            const story = stories.find(s => s.id === id);
+            if (!story) return;
+            
+            // Populate the form with story data
+            storyTitleInput.value = story.title;
+            storyAuthorInput.value = story.author;
+            storyGenreSelect.value = story.genre;
+            storyTagsInput.value = story.tags.join(', ');
+            storyContentTextarea.value = story.content;
+            
+            // Show the write section
+            showSection('write');
+            
+            // Update preview
+            updatePreview();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // In a real app, you would track that we're editing an existing story
+            // and update it on publish instead of creating a new one
+        }
+
+        // Initialize with home section
+        showSection('home');
+        // ============= LOGIN SYSTEM =============
+// DOM Elements for login
+const loginModal = document.getElementById('login-modal');
+const signupModal = document.getElementById('signup-modal');
+const loginBtn = document.getElementById('login-btn');
+const signupBtn = document.getElementById('signup-btn');
+const closeLogin = document.getElementById('close-login');
+const closeSignup = document.getElementById('close-signup');
+const loginForm = document.getElementById('login-form');
+const signupForm = document.getElementById('signup-form');
+const switchToSignup = document.getElementById('switch-to-signup');
+const switchToLogin = document.getElementById('switch-to-login');
+const logoutBtn = document.getElementById('logout-btn');
+const userMenu = document.getElementById('user-menu');
+const userAvatar = document.getElementById('user-avatar');
+const authButtons = document.querySelector('.auth-buttons');
+const toggleLoginPassword = document.getElementById('toggle-login-password');
+const toggleSignupPassword = document.getElementById('toggle-signup-password');
+
+// Simulated user database (in real app, this would be on a server)
+let users = JSON.parse(localStorage.getItem('storycraft_users')) || [
+    { id: 1, name: 'Demo User', email: 'demo@example.com', password: 'demo123', stories: [] }
+];
+
+// Current logged in user
+let currentUser = JSON.parse(localStorage.getItem('storycraft_current_user')) || null;
+
+// Check if user is already logged in
+function checkLoginStatus() {
+    if (currentUser) {
+        // Show user menu, hide auth buttons
+        authButtons.style.display = 'none';
+        userMenu.style.display = 'flex';
+        userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+        
+        // Filter stories to show only user's stories
+        displayStories();
+    }
+}
+
+// Show login modal
+loginBtn.addEventListener('click', () => {
+    loginModal.classList.add('active');
+});
+
+// Show signup modal
+signupBtn.addEventListener('click', () => {
+    signupModal.classList.add('active');
+});
+
+// Close modals
+closeLogin.addEventListener('click', () => {
+    loginModal.classList.remove('active');
+});
+
+closeSignup.addEventListener('click', () => {
+    signupModal.classList.remove('active');
+});
+
+// Switch between login and signup
+switchToSignup.addEventListener('click', () => {
+    loginModal.classList.remove('active');
+    signupModal.classList.add('active');
+});
+
+switchToLogin.addEventListener('click', () => {
+    signupModal.classList.remove('active');
+    loginModal.classList.add('active');
+});
+
+// Toggle password visibility
+toggleLoginPassword.addEventListener('click', function() {
+    const passwordInput = document.getElementById('login-password');
+    const icon = this.querySelector('i');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+
+toggleSignupPassword.addEventListener('click', function() {
+    const passwordInput = document.getElementById('signup-password');
+    const icon = this.querySelector('i');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+
+// Login form submission
+loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    
+    // Find user
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        // Successful login
+        currentUser = { id: user.id, name: user.name, email: user.email };
+        localStorage.setItem('storycraft_current_user', JSON.stringify(currentUser));
+        
+        // Update UI
+        authButtons.style.display = 'none';
+        userMenu.style.display = 'flex';
+        userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+        
+        // Close modal and show success
+        loginModal.classList.remove('active');
+        showMessage('Successfully logged in!', 'success');
+        
+        // Reload stories to show user-specific content
+        displayStories();
+    } else {
+        // Failed login
+        showMessage('Invalid email or password', 'error', loginForm);
+    }
+});
+
+// Signup form submission
+signupForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    
+    // Validation
+    if (password !== confirmPassword) {
+        showMessage('Passwords do not match', 'error', signupForm);
+        return;
+    }
+    
+    if (password.length < 6) {
+        showMessage('Password must be at least 6 characters', 'error', signupForm);
+        return;
+    }
+    
+    // Check if user already exists
+    if (users.find(u => u.email === email)) {
+        showMessage('Email already registered', 'error', signupForm);
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: users.length + 1,
+        name: name,
+        email: email,
+        password: password,
+        stories: [],
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('storycraft_users', JSON.stringify(users));
+    
+    // Auto login after signup
+    currentUser = { id: newUser.id, name: newUser.name, email: newUser.email };
+    localStorage.setItem('storycraft_current_user', JSON.stringify(currentUser));
+    
+    // Update UI
+    authButtons.style.display = 'none';
+    userMenu.style.display = 'flex';
+    userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+    
+    // Close modal and show success
+    signupModal.classList.remove('active');
+    showMessage('Account created successfully!', 'success');
+    
+    // Reload stories
+    displayStories();
+});
+
+// Logout
+logoutBtn.addEventListener('click', function() {
+    currentUser = null;
+    localStorage.removeItem('storycraft_current_user');
+    
+    // Update UI
+    authButtons.style.display = 'flex';
+    userMenu.style.display = 'none';
+    
+    showMessage('Logged out successfully', 'success');
+    displayStories();
+});
+
+// Show message function
+function showMessage(text, type, parent = document.body) {
+    // Remove any existing messages
+    const existingMsg = parent.querySelector('.message');
+    if (existingMsg) existingMsg.remove();
+    
+    // Create message element
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    message.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${text}</span>
+    `;
+    
+    // Insert message
+    if (parent === document.body) {
+        document.querySelector('.container').insertBefore(message, document.querySelector('.main-content'));
+    } else {
+        parent.insertBefore(message, parent.firstChild);
+    }
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        message.remove();
+    }, 5000);
+}
+
+// Initialize login system
+checkLoginStatus();
+
+// ============= END LOGIN SYSTEM =============
+    </script>
+</body>
+</html>
